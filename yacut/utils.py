@@ -35,8 +35,16 @@ async def _upload_single_file(session, file_storage, folder='Uploader'):
 
     file_storage.stream.seek(0)
 
+    data = aiohttp.FormData()
+    data.add_field(
+        'file',
+        file_storage.stream.read(),
+        filename=filename,
+        content_type=file_storage.content_type or 'application/octet-stream'
+    )
+
     async with session.put(
-            href, data=file_storage.stream
+            href, data=data
     ) as upload_resp:
         if upload_resp.status not in (200, 201, 202, 204):
             raise RuntimeError(
