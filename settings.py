@@ -6,4 +6,6 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY')
     WTF_CSRF_TIME_LIMIT = None
     DISK_TOKEN = os.getenv('DISK_TOKEN')
-    YANDEX_API_BASE = 'https://cloud-api.yandex.net/v1/disk/'
+    YANDEX_API_BASE = os.getenv(
+        'YANDEX_API_BASE', 'https://cloud-api.yandex.net/v1/disk/'
+    )
