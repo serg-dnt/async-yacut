@@ -10,7 +10,6 @@ from .models import URLMap
 ALLOWED_CHARS = string.ascii_letters + string.digits
 
 
-
 def get_unique_short_id(length: int = 6) -> str:
     while True:
         short_id = ''.join(random.choices(ALLOWED_CHARS, k=length))
