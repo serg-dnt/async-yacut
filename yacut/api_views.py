@@ -31,18 +31,20 @@ def create_short_link():
         if custom_id == 'files':
             return (
                 jsonify(
-                    {'message': \
-                         'Предложенный вариант короткой ссылки уже существует.'
-                     }
+                    {
+                        'message':
+                        'Предложенный вариант короткой ссылки уже существует.'
+                    }
                 ),
                 HTTPStatus.BAD_REQUEST
             )
         if URLMap.query.filter_by(short=custom_id).first():
             return (
                 jsonify(
-                    {'message': \
-                         'Предложенный вариант короткой ссылки уже существует.'
-                     }
+                    {
+                        'message':
+                        'Предложенный вариант короткой ссылки уже существует.'
+                    }
                 ),
                 HTTPStatus.BAD_REQUEST
             )

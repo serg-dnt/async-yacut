@@ -6,8 +6,6 @@ from .models import URLMap
 from .utils import get_unique_short_id, upload_files_to_yandex_disk
 
 
-BASE_URL = 'http://127.0.0.1:5000/'
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = URLForm()
@@ -21,13 +19,18 @@ def index():
         url_map = URLMap(original=original_link, short=short_id)
         db.session.add(url_map)
         db.session.commit()
-        short_url = f'{BASE_URL}{short_id}'
+        short_url = url_for(
+            'redirect_to_original',
+            short_id=short_id,
+            _external=True
+        )
     return render_template(
         'index.html',
         form=form,
         short_url=short_url,
         active_page='index'
     )
+
 
 @app.route('/files', methods=['GET', 'POST'])
 def files():
@@ -43,15 +46,19 @@ def files():
             db.session.add(url_map)
             db.session.commit()
             short_link = url_for(
-                'redirect_to_original', short_id=short_id, _external=True
+                'redirect_to_original',
+                short_id=short_id,
+                _external=True
             )
-            file_links.append((filename, public_url))
+            file_links.append((filename, short_link))
     return render_template(
         'files.html',
         form=form,
         file_links=file_links,
         active_page='files'
     )
+
+
 @app.route('/<short_id>')
 def redirect_to_original(short_id):
     url_map = URLMap.query.filter_by(short=short_id).first()

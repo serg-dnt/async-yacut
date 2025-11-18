@@ -15,15 +15,18 @@ class InvalidAPIUsage(Exception):
     def to_dict(self):
         return dict(message=self.message)
 
+
 @app.errorhandler(InvalidAPIUsage)
 def invalid_api_usage(error):
     return jsonify(error.to_dict()), error.status_code
+
 
 @app.errorhandler(404)
 def page_not_found(e):
     if request.path.startswith('/api/'):
         return jsonify({'error': 'Page not found'}), HTTPStatus.NOT_FOUND
     return render_template('404.html'), HTTPStatus.NOT_FOUND
+
 
 @app.errorhandler(500)
 def internal_server_error(e):

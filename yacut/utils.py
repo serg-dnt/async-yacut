@@ -1,14 +1,15 @@
-import asyncio, aiohttp, random, string
+import asyncio
+import aiohttp
+import random
+import string
 from flask import current_app
-from werkzeug.datastructures import file_storage
-from werkzeug.utils import secure_filename
 
 from .models import URLMap
-from . import db
 
 
 ALLOWED_CHARS = string.ascii_letters + string.digits
-# YANDEX_API_BASE = 'https://cloud-api.yandex.net/v1/disk/'
+YANDEX_API_BASE = 'https://cloud-api.yandex.net/v1/disk/'
+
 
 def get_unique_short_id(length: int = 6) -> str:
     while True:
@@ -16,9 +17,10 @@ def get_unique_short_id(length: int = 6) -> str:
         if not URLMap.query.filter_by(short=short_id).first():
             return short_id
 
+
 async def _upload_single_file(session, file_storage, folder='Uploader'):
     base = current_app.config.get('YANDEX_API_BASE')
-    filename = secure_filename(file_storage.filename)
+    filename = file_storage.filename
     path = f'{folder}/{filename}'
 
     async with session.get(
@@ -43,16 +45,17 @@ async def _upload_single_file(session, file_storage, folder='Uploader'):
             )
 
     async with session.get(
-        f'{base}resources',
+        f'{base}resources/download',
         params={'path': path},
     ) as meta_resp:
         meta = await meta_resp.json()
-        public_url = meta.get('public_url')
+        public_url = meta.get('href')
         if not public_url:
             raise RuntimeError(
                 f'Не удалось получить public_url для файла {filename}'
             )
     return filename, public_url
+
 
 async def _upload_files_to_yandex_disk_async(files):
     token = current_app.config.get('DISK_TOKEN')
@@ -66,6 +69,7 @@ async def _upload_files_to_yandex_disk_async(files):
             for file_storage in files
         ]
         return await asyncio.gather(*tasks)
+
 
 def upload_files_to_yandex_disk(files):
     if not files:
