@@ -8,7 +8,7 @@ from .models import URLMap
 
 
 ALLOWED_CHARS = string.ascii_letters + string.digits
-YANDEX_API_BASE = 'https://cloud-api.yandex.net/v1/disk/'
+
 
 
 def get_unique_short_id(length: int = 6) -> str:
