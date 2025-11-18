@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}YaCut — загрузка файлов{% endblock %}
+
+{% block content %}
+<section class="container my-5 px-4">
+  <h1 class="text-center">Загрузка файлов</h1>
+  <p class="text-center my-4">
+    Загрузите один или несколько файлов одновременно
+  </p>
+
+  <div class="container">
+    <div class="row my-3">
+      <div class="col-sm"></div>
+      <div class="col-sm">
+
+        <form method="POST" enctype="multipart/form-data">
+          {{ form.csrf_token }}
+
+          {{ form.files(class="form-control form-control-lg py-2 mb-3") }}
+          {% for error in form.files.errors %}
+            <p><span style="color:red">{{ error }}</span></p>
+          {% endfor %}
+
+          {{ form.submit(class="btn btn-primary") }}
+        </form>
+
+      </div>
+      <div class="col-sm"></div>
+    </div>
+  </div>
+
+  {% if file_links %}
+  <h5 class="text-center my-3">Ссылки на загруженные файлы</h5>
+  <ul>
+    {% for name, link in file_links %}
+      <li><a href="{{ link }}">{{ name }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+</section>
+{% endblock %}
