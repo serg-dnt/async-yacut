@@ -3,14 +3,16 @@ import aiohttp
 import random
 import string
 from flask import current_app
+from http import HTTPStatus
 
 from .models import URLMap
 
 
 ALLOWED_CHARS = string.ascii_letters + string.digits
+SHORT_ID_LENGTH = 6
 
 
-def get_unique_short_id(length: int = 6) -> str:
+def get_unique_short_id(length: int = SHORT_ID_LENGTH) -> str:
     while True:
         short_id = ''.join(random.choices(ALLOWED_CHARS, k=length))
         if not URLMap.query.filter_by(short=short_id).first():
@@ -46,7 +48,12 @@ async def _upload_single_file(session, file_storage, folder='Uploader'):
     async with session.put(
             href, data=data
     ) as upload_resp:
-        if upload_resp.status not in (200, 201, 202, 204):
+        if upload_resp.status not in (
+            HTTPStatus.OK,
+            HTTPStatus.CREATED,
+            HTTPStatus.ACCEPTED,
+            HTTPStatus.NO_CONTENT
+        ):
             raise RuntimeError(
                 f'Ошибка загрузки файла {filename} на Яндекс Диск'
             )

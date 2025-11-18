@@ -6,6 +6,8 @@ from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 from .utils import get_unique_short_id, ALLOWED_CHARS
 
+ALLOWED_CUSTOM_ID_LENGTH = 16
+
 
 @app.route('/api/id/', methods=['POST'])
 def create_short_link():
@@ -19,7 +21,7 @@ def create_short_link():
         ), HTTPStatus.BAD_REQUEST
     custom_id = data.get('custom_id')
     if custom_id:
-        if len(custom_id) > 16 or any(
+        if len(custom_id) > ALLOWED_CUSTOM_ID_LENGTH or any(
                 ch not in ALLOWED_CHARS for ch in custom_id
         ):
             return (

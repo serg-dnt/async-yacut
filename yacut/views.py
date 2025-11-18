@@ -1,4 +1,5 @@
 from flask import abort, redirect, url_for, render_template
+from http import HTTPStatus
 
 from . import app, db
 from .forms import URLForm, FilesForm
@@ -63,5 +64,5 @@ def files():
 def redirect_to_original(short_id):
     url_map = URLMap.query.filter_by(short=short_id).first()
     if url_map is None:
-        abort(404)
+        abort(HTTPStatus.NOT_FOUND)
     return redirect(url_map.original)
